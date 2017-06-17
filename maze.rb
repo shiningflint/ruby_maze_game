@@ -28,7 +28,34 @@ class Player
     end
   end
 
+  def recon
+    @in_room.doors.each_with_index do |door, index|
+      compare_direction @direction, door, index
+    end
+  end
+
   private
+    def compare_direction direction, door, index
+      difference = direction - index
+      if door != nil
+        exist = "a door"
+      else
+        exist = "no door"
+      end
+
+      if difference == 0
+        puts "There is #{exist} in front of you"
+      elsif difference == 1
+        puts "There is #{exist} on your left"
+      elsif difference == 2
+        puts "There is #{exist} on your back"
+      elsif difference == 3 || difference == -1
+        puts "There is #{exist} on your right"
+      else
+        puts "not yet implemented"
+      end
+    end
+
     def check_door direction, in_room, action
       direction = turn_direction action, direction
       if in_room.doors[direction] != nil
@@ -95,12 +122,13 @@ rooms = {
   1 => MazeRoom.new(1, ["goal", nil, 2, nil]),
   2 => MazeRoom.new(2, [1, nil, nil, nil])
 }
-player1 = Player.new 2, rooms[2]
+player1 = Player.new 0, rooms[2]
 puts player1.in_room
 
 while true
   puts "\n\nPlayer is heading #{player1.show_direction}"
   puts "Player is in room #{player1.in_room.room_number}"
+  player1.recon
   puts "Move player 1 (right, left, forward, turn back)"
   action = $stdin.gets.chomp
   player1.move action
